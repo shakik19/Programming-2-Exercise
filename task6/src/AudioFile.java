@@ -11,37 +11,36 @@ public class AudioFile {
 	
 	public AudioFile(String path) {
 		parsePathname(path);
-		parseFilename(pathname);
+		parseFilename(filename);
 	}
 	
 	public void parsePathname(String path) {
-		path = path.trim();
 		if (path.isBlank()) {
 			pathname = "";
 			filename = "";
 			return;
 		}
-		String result = removeExtraSlashes(path).trim();
 		
+		String result = removeExtraSlashes(path.trim());
 		pathname = makeOsSpecificAdjustments(
 						result.replace("\\", "/")
 		);
 		// Assigning the Filename
-		int lastIndex = -1;
+		int lastPathSep;
 		if (isWindows()) {
-			lastIndex = pathname.lastIndexOf("\\");
+			lastPathSep = pathname.lastIndexOf("\\");
 		} else {
-			lastIndex = pathname.lastIndexOf("/");
+			lastPathSep = pathname.lastIndexOf("/");
 		}
-		if (lastIndex == -1) {
+		if (lastPathSep == -1) {
 			filename = pathname;
 		} else {
-			filename = pathname.substring(lastIndex + 1);
+			filename = pathname.substring(lastPathSep + 1).trim();
 		}
 	}
 	
 	public void parseFilename(String filename) {
-		if (filename.trim().isEmpty()){
+		if (filename.trim().isEmpty()) {
 			return;
 		}
 		filename = removeExtraSlashes(filename);
@@ -51,19 +50,15 @@ public class AudioFile {
 		if (authTitleSepIndex == -1) {
 			if (extensionStartIndex == -1) {
 				title = filename.trim();
-				return;
-			}else{
+			} else {
 				title = filename.substring(0, extensionStartIndex);
-				return;
 			}
-		} else if (authTitleSepIndex != -1){
+		} else {
 			author = filename.substring(0, authTitleSepIndex).trim();
-			if (extensionStartIndex != -1){
+			if (extensionStartIndex != -1) {
 				title = filename.substring(authTitleSepIndex + 2, extensionStartIndex).trim();
-				return;
 			} else {
 				title = filename.substring(authTitleSepIndex + 2).trim();
-				return;
 			}
 		}
 	}
@@ -71,8 +66,7 @@ public class AudioFile {
 	private String removeExtraSlashes(String str) {
 		StringBuilder result = new StringBuilder();
 		char[] charArr = str.toCharArray();
-		
-		// Structuring a string excluding the extra file separators
+		// Structuring a string excluding the extra file separators and new lines
 		if (charArr[0] != '\n') {
 			result.append(charArr[0]);
 		}
@@ -129,16 +123,6 @@ public class AudioFile {
 	
 	@Override
 	public String toString() {
-		System.out.println(ppstring());
 		return (Objects.equals(getAuthor(), "")) ? getTitle() : getAuthor() + " - " + getTitle();
-	}
-	
-	public String ppstring() {
-		return "AudioFile{" +
-						"pathname='" + pathname + '\'' +
-						", filename='" + filename + '\'' +
-						", author='" + author + '\'' +
-						", title='" + title + '\'' +
-						'}';
 	}
 }
