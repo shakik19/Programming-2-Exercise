@@ -1,3 +1,5 @@
+import java.util.Objects;
+
 public class AudioFile {
 	private String pathname = "";
 	private String filename = "";
@@ -5,6 +7,10 @@ public class AudioFile {
 	private String title = "";
 	
 	public AudioFile() {
+	}
+	public AudioFile(String path){
+		parsePathname(path);
+		parseFilename(pathname);
 	}
 	
 	public void parsePathname(String path) {
@@ -14,64 +20,65 @@ public class AudioFile {
 			filename = "";
 			return;
 		}
-		
-		StringBuilder result = removeRedundantSymbols(path);
-/*		char[] charArr = path.toCharArray();
-		
-		if (charArr[0] != '‿') {
-			result.append(charArr[0]);
-		}
-		
-		// Building a pathname excluding the redundant spaces '‿' and file separators
-		for (int i = 1; i < path.length(); i++) {
-			if (charArr[i] != '‿') {
-				if (charArr[i] == '\\' || charArr[i] == '/') {
-					if (charArr[i - 1] != charArr[i]) {
-						result.append(charArr[i]);
-					}
-				} else {
-					result.append(charArr[i]);
-				}
-			}
-		}*/
+		String result = removeExtraSlashes(path);
+		result = removeExtraSpaces(result);
 		
 		pathname = makeOsSpecificAdjustments(
-						result.toString()
-										.trim()
-										.replace("\\", "/"));
-		
+						result.trim().replace("\\", "/")
+		);
 		// Assigning the Filename
-		int lastIndex;
-		if (isWindows()){
+		int lastIndex = -1;
+		if (isWindows()) {
 			lastIndex = pathname.lastIndexOf("\\");
-		}else {
-			 lastIndex = pathname.lastIndexOf("/");
+		} else {
+			lastIndex = pathname.lastIndexOf("/");
 		}
-		filename = pathname.substring(lastIndex + 1);
+		if (lastIndex == -1){
+			filename = pathname;
+		} else{
+			filename = pathname.substring(lastIndex + 1);
+		}
 	}
 	
-	public void parseFilename(String filename){
-		int authTitleSepIndex = filename.indexOf("‿-‿");
+	public void parseFilename(String filename) {
+		filename = removeExtraSlashes(filename);
+		int authTitleSepIndex = filename.indexOf(" - ");
 		int extensionStartIndex = filename.lastIndexOf(".");
 		
-		if(authTitleSepIndex == -1 && extensionStartIndex == -1){
+		if (authTitleSepIndex == -1) {
 			author = "";
-			title = filename;
-			return;
+		} else {
+			author = removeExtraSpaces(
+							filename.substring(0, authTitleSepIndex)
+			
+			);
+		}
+		
+		if (authTitleSepIndex == -1 && extensionStartIndex != -1) {
+			title = removeExtraSpaces(
+							filename.substring(0, extensionStartIndex)
+			
+			);
+		} else if ((authTitleSepIndex != -1 && extensionStartIndex != -1)) {
+			title = removeExtraSpaces(
+							filename.substring(authTitleSepIndex + 2, extensionStartIndex)
+			
+			);
+		} else {
+			title = removeExtraSpaces(filename);
 		}
 	}
 	
-	private StringBuilder removeRedundantSymbols(String str){
+	private String removeExtraSlashes(String str) {
 		StringBuilder result = new StringBuilder();
 		char[] charArr = str.toCharArray();
 		
-		if (charArr[0] != '‿') {
+		// Structuring a string excluding the extra file separators
+		if (charArr[0] != '\n') {
 			result.append(charArr[0]);
 		}
-		
-		// Structuring a string excluding the redundant spaces '‿' and file separators
 		for (int i = 1; i < str.length(); i++) {
-			if (charArr[i] != '‿') {
+			if (charArr[i] != '\n') {
 				if (charArr[i] == '\\' || charArr[i] == '/') {
 					if (charArr[i - 1] != charArr[i]) {
 						result.append(charArr[i]);
@@ -81,11 +88,23 @@ public class AudioFile {
 				}
 			}
 		}
-		return result;
+		return result.toString();
 	}
+	
+	private String removeExtraSpaces(String str) {
+		while (str.startsWith(" ")) {
+			str = str.substring(1);
+		}
+		while (str.endsWith(" ")) {
+			str = str.substring(0, str.length() - 1);
+		}
+		return str.trim();
+	}
+	
 	private boolean isWindows() {
 		return System.getProperty("os.name").equalsIgnoreCase("win");
 	}
+	
 	private String makeOsSpecificAdjustments(String path) {
 		if (isWindows()) {
 			return path.replace("/", "\\");
@@ -93,7 +112,11 @@ public class AudioFile {
 			// Adjusting the Windows Drive letter for Unix systems
 			if (path.length() > 1 && path.charAt(1) == ':') {
 				StringBuilder str = new StringBuilder();
-				return str.append("/").append(path).toString().replace(":", "");
+				return str
+								.append("/")
+								.append(path)
+								.toString()
+								.replace(":", "");
 			}
 			return path;
 		}
@@ -105,5 +128,18 @@ public class AudioFile {
 	
 	public String getFilename() {
 		return filename;
+	}
+	
+	public String getAuthor() {
+		return author;
+	}
+	
+	public String getTitle() {
+		return title;
+	}
+	
+	@Override
+	public String toString() {
+		return (Objects.equals(getAuthor(), ""))? getTitle() : getAuthor() + "‿-‿" + getTitle();
 	}
 }
