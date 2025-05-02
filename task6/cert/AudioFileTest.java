@@ -29,9 +29,9 @@ public class AudioFileTest {
     public void setUp() {
 		// to test Windows or Linux just use the corresponding lines in comments below
 		// Windows: uncomment the next line
-		sep = Utils.emulateWindows();
+		// sep = Utils.emulateWindows();
 		// Linux: uncomment the next line
-		//sep = Utils.emulateLinux();
+		sep = Utils.emulateLinux();
 
         String osname = System.getProperty("os.name");
         if (osname.toLowerCase().indexOf("win") >= 0)

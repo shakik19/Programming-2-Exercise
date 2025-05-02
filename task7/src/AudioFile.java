@@ -1,10 +1,10 @@
 import java.util.Objects;
 
-public class AudioFile {
+public abstract class AudioFile {
 	private String pathname = "";
 	private String filename = "";
-	private String author = "";
-	private String title = "";
+	protected String author = "";
+	protected String title = "";
 	
 	public AudioFile() {
 	}
@@ -103,6 +103,16 @@ public class AudioFile {
 			return path;
 		}
 	}
+	
+	public abstract void play();
+	
+	public abstract void togglePause();
+	
+	public abstract void stop();
+	
+	protected abstract String formatDuration();
+	
+	protected abstract String formatPosition();
 	
 	public String getPathname() {
 		return pathname;
