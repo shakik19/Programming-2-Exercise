@@ -20,13 +20,6 @@ public class WavFile extends SampledFile{
 			throw new RuntimeException(String.format("%s is not an wav file", getFilename()));
 		}
 	}
-	
-	private void checkReadability(String filepath){
-		File file = new File(filepath);
-		if (!file.canRead()){
-			throw new RuntimeException();
-		}
-	}
 
 	private void readAndSetDurationFromFile(){
 		WavParamReader.readParams(getPathname());

@@ -34,13 +34,6 @@ public class TaggedFile extends SampledFile{
 		}
 	}
 	
-	private void checkReadability(String filepath){
-		File file = new File(filepath);
-		if (!file.canRead()){
-			throw new RuntimeException();
-		}
-	}
-	
 	@Override
 	public String toString() {
 		if(getAlbum().isEmpty()){

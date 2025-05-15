@@ -1,5 +1,7 @@
 import studiplayer.basic.BasicPlayer;
 
+import java.io.File;
+
 public abstract class SampledFile extends AudioFile{
 	private long duration;
 	
@@ -45,6 +47,13 @@ public abstract class SampledFile extends AudioFile{
 		long minutes = seconds / 60;
 		seconds = seconds % 60;
 		return String.format("%02d:%02d", minutes, seconds);
+	}
+	
+	public static void checkReadability(String filepath){
+		File file = new File(filepath);
+		if (!file.canRead()){
+			throw new RuntimeException();
+		}
 	}
 	
 	protected long getDuration(){
