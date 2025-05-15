@@ -14,7 +14,7 @@ public class WavFile extends SampledFile{
 	}
 	
 	private void checkExtension(){
-		int index = getFilename().indexOf(".");
+		int index = getFilename().lastIndexOf(".");
 		String extension = getFilename().substring(index + 1);
 		if (!extension.equalsIgnoreCase("wav")){
 			throw new RuntimeException(String.format("%s is not an wav file", getFilename()));
