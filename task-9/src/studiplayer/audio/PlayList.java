@@ -7,25 +7,32 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class PlayList {
-	private int current;
+	private ControllablePlayListIterator itr;
 	private String search;
 	private SortCriterion sortCriterion = SortCriterion.DEFAULT;
-	private LinkedList<AudioFile> playList = new LinkedList<>();
+	private List<AudioFile> playList = new LinkedList<>();
 	
 	public PlayList() {
-		this.current = 0;
+//		this.itr = new ControllablePlayListIterator(playList);
+		this.itr = new ControllablePlayListIterator(new ArrayList<>(playList));
 	}
 	
 	public PlayList(String m3uPathname) throws NotPlayableException {
 		loadFromM3U(m3uPathname);
+//		itr = new ControllablePlayListIterator(playList);
+		itr = new ControllablePlayListIterator(new ArrayList<>(playList));
 	}
 	
 	public void add(AudioFile audioFile) {
 		playList.add(audioFile);
+//		itr = new ControllablePlayListIterator(playList);
+		itr = new ControllablePlayListIterator(new ArrayList<>(playList));
 	}
 	
 	public void remove(AudioFile audioFile) {
 		playList.remove(audioFile);
+//		itr = new ControllablePlayListIterator(playList);
+		itr = new ControllablePlayListIterator(new ArrayList<>(playList));
 	}
 	
 	public int size() {
@@ -33,17 +40,17 @@ public class PlayList {
 	}
 	
 	public AudioFile currentAudioFile() {
-		return (size() == 0) ? null : playList.get(current);
+		if (itr.getList().isEmpty()) {
+			return null;
+		} else if (itr.getItrPosition() >= itr.getList().size()) {
+//			itr = new ControllablePlayListIterator(playList);
+			itr = new ControllablePlayListIterator(new ArrayList<>(playList));
+		}
+		return itr.getList().get(itr.getItrPosition());
 	}
 	
 	public void nextSong() {
-		if (current > size()) {
-			current = 0;
-			return;
-		}
-		if (!playList.isEmpty()){
-			current = ++current % size();
-		}
+		itr.setItrPosition(itr.getItrPosition() + 1);
 	}
 	
 	public void loadFromM3U(String m3uPathname) throws NotPlayableException {
@@ -69,8 +76,6 @@ public class PlayList {
 								}
 							})
 							.collect(Collectors.toCollection(LinkedList::new));
-			
-			setCurrent(0);
 		} catch (Exception ignored) {
 		} finally {
 			try {
@@ -106,34 +111,36 @@ public class PlayList {
 		return playList;
 	}
 	
-	public int getCurrent() {
-		return current;
-	}
-	
 	public String getSearch() {
 		return search;
 	}
 	
 	public void setSearch(String search) {
 		this.search = search;
+//		itr = new ControllablePlayListIterator(playList, search, sortCriterion);
+		itr = new ControllablePlayListIterator(new ArrayList<>(playList), search, sortCriterion);
 	}
 	
 	public SortCriterion getSortCriterion() {
 		return sortCriterion;
 	}
 	
-	public void setSortCriterion(SortCriterion sortCriterion) {
-		this.sortCriterion = sortCriterion;
+	public void setSortCriterion(SortCriterion sc) {
+		this.sortCriterion = sc;
+//		itr = new ControllablePlayListIterator(playList, search, sc);
+		itr = new ControllablePlayListIterator(new ArrayList<>(playList), search, sc);
 	}
 	
-	public void setCurrent(int value) {
-		current = value;
-	}
-	
-	public void jumpToAudioFile(AudioFile tf2) {
+	public void jumpToAudioFile(AudioFile af) {
+		itr.setItrPosition(itr.getList().indexOf(af));
 	}
 	
 	public Iterator<AudioFile> iterator() {
-		return null;
+		return new ControllablePlayListIterator(new ArrayList<>(playList), search, sortCriterion);
+	}
+	
+	@Override
+	public String toString() {
+		return playList.toString();
 	}
 }

@@ -27,7 +27,7 @@ public class ControllablePlayListIterator implements Iterator<AudioFile> {
 	}
 	
 	private List<AudioFile> filterBySearch(List<AudioFile> audioFiles, String search) {
-		if (search == null || search.trim().isEmpty()){
+		if (search == null || search.trim().isEmpty()) {
 			return audioFiles;
 		} else {
 			return audioFiles.stream()
@@ -49,7 +49,7 @@ public class ControllablePlayListIterator implements Iterator<AudioFile> {
 		
 		return matchesBasic || matchesAlbum;
 	}
-
+	
 	
 	@Override
 	public boolean hasNext() {
@@ -58,10 +58,14 @@ public class ControllablePlayListIterator implements Iterator<AudioFile> {
 	
 	@Override
 	public AudioFile next() {
-		if (itrPosition >= list.size()) {
-			throw new RuntimeException("Iteration already completed");
+		if (list.isEmpty()) {
+			throw new RuntimeException("There is no Audiofile in the playlist");
+		} else if (itrPosition >= list.size()) {
+			itrPosition = 0;
+			return list.get(itrPosition++);
+		} else {
+			return list.get(itrPosition++);
 		}
-		return list.get(itrPosition++);
 	}
 	
 	public AudioFile jumpToAudioFile(AudioFile audioFile) {
@@ -72,5 +76,22 @@ public class ControllablePlayListIterator implements Iterator<AudioFile> {
 		} else {
 			return null;
 		}
+	}
+	
+	public int getItrPosition() {
+		return itrPosition;
+	}
+	
+	public void setItrPosition(int itrPosition) {
+		this.itrPosition = itrPosition;
+	}
+	
+	public List<AudioFile> getList() {
+		return list;
+	}
+	
+	@Override
+	public String toString() {
+		return list.toString();
 	}
 }
