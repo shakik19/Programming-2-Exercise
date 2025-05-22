@@ -12,11 +12,11 @@ public class WavFile extends SampledFile {
 		readAndSetDurationFromFile();
 	}
 	
-	private void checkExtension() {
+	private void checkExtension() throws NotPlayableException {
 		int index = getFilename().lastIndexOf(".");
 		String extension = getFilename().substring(index + 1);
 		if (!extension.equalsIgnoreCase("wav")) {
-			throw new RuntimeException(String.format("%s is not an wav file", getFilename()));
+			throw new NotPlayableException(getPathname(), "Not a wav file");
 		}
 	}
 	
@@ -24,8 +24,7 @@ public class WavFile extends SampledFile {
 		try {
 			WavParamReader.readParams(getPathname());
 		} catch (Exception e){
-			throw new NotPlayableException(getPathname(),
-							String.format("Params are not readable\n Cause: %s", e.getMessage()), e);
+			throw new NotPlayableException(getPathname(), "Params are not readable", e);
 		}
 		long numberOfFrames = WavParamReader.getNumberOfFrames();
 		float frameRate = WavParamReader.getFrameRate();

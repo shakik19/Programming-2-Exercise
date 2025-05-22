@@ -22,9 +22,8 @@ public class TaggedFile extends SampledFile {
 		Map<String, Object> tagMap = null;
 		try {
 			tagMap = TagReader.readTags(getPathname());
-		} catch (Exception e){
-			throw new NotPlayableException(getPathname(),
-							String.format("Tags are not readable\n Cause: %s", e.getMessage()), e);
+		} catch (RuntimeException e){
+			throw new NotPlayableException(super.getPathname(), "Audiofile is not playable", e);
 		}
 		super.setDuration((Long) tagMap.get("duration"));
 		String albumTag = ((String) tagMap.get("album"));

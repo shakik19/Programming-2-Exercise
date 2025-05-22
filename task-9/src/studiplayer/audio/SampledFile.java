@@ -18,9 +18,8 @@ public abstract class SampledFile extends AudioFile {
 	public void play() throws NotPlayableException {
 		try {
 			BasicPlayer.play(super.getPathname());
-		} catch (Exception e){
-			throw new NotPlayableException(super.getPathname(),
-							String.format("%s is not playable\n Cause: %s", super.getFilename(), e.getMessage()), e);
+		} catch (RuntimeException e){
+			throw new NotPlayableException(super.getPathname(), "Audiofile is not playable", e);
 		}
 	}
 	

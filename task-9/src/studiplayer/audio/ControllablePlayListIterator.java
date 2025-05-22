@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-public class ControllablePlayListIterator implements Iterator {
+public class ControllablePlayListIterator implements Iterator<AudioFile> {
 	private final List<AudioFile> list;
 	private int itrPosition = 0;
 	
@@ -38,11 +38,18 @@ public class ControllablePlayListIterator implements Iterator {
 	}
 	
 	private boolean matchSearch(AudioFile audioFile, String search) {
-		return ((audioFile.getFilename() != null && audioFile.getFilename().toLowerCase().contains(search))
+		boolean matchesBasic = (audioFile.getFilename() != null && audioFile.getFilename().toLowerCase().contains(search))
 						|| (audioFile.getTitle() != null && audioFile.getTitle().toLowerCase().contains(search))
-						|| (audioFile.getAuthor() != null && audioFile.getAuthor().toLowerCase().contains(search))
-						|| (audioFile instanceof TaggedFile)) && ((TaggedFile) audioFile).getAlbum() != null && ((TaggedFile) audioFile).getAlbum().toLowerCase().contains(search);
+						|| (audioFile.getAuthor() != null && audioFile.getAuthor().toLowerCase().contains(search));
+		
+		boolean matchesAlbum = false;
+		if (audioFile instanceof TaggedFile taggedFile) {
+			matchesAlbum = taggedFile.getAlbum() != null && taggedFile.getAlbum().toLowerCase().contains(search);
+		}
+		
+		return matchesBasic || matchesAlbum;
 	}
+
 	
 	@Override
 	public boolean hasNext() {

@@ -12,7 +12,7 @@ public class AudioFileFactory {
 		} else if (fileExtension.equals("mp3") || fileExtension.equals("ogg")) {
 			return new TaggedFile(path);
 		} else {
-			throw new NotPlayableException(path, String.format("Unknown suffix for AudioFile \"%s\"", path));
+			throw new NotPlayableException(path, "Unknown suffix for AudioFile");
 		}
 	}
 }
