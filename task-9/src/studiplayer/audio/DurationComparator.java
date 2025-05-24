@@ -14,8 +14,19 @@ public class DurationComparator implements Comparator<AudioFile> {
 		
 		if (o1 == o2) return 0;
 		
-		Long d1 = (o1 instanceof SampledFile sf) ? sf.getDuration() : null;
-		Long d2 = (o2 instanceof SampledFile sf) ? sf.getDuration() : null;
+	/*
+	Long d1 = (o1 instanceof SampledFile sf) ? sf.getDuration() : null;
+	Long d2 = (o2 instanceof SampledFile sf) ? sf.getDuration() : null;
+	*/
+		Long d1 = null;
+		if (o1 instanceof SampledFile) {
+			d1 = ((SampledFile) o1).getDuration();
+		}
+		
+		Long d2 = null;
+		if (o2 instanceof SampledFile) {
+			d2 = ((SampledFile) o2).getDuration();
+		}
 		
 		if (d1 == null ^ d2 == null) {
 			return d1 == null ? -1 : 1;

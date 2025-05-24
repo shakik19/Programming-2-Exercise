@@ -13,26 +13,22 @@ public class PlayList {
 	private List<AudioFile> playList = new LinkedList<>();
 	
 	public PlayList() {
-//		this.itr = new ControllablePlayListIterator(playList);
-		this.itr = new ControllablePlayListIterator(new ArrayList<>(playList));
+		this.itr = new ControllablePlayListIterator(playList);
 	}
 	
 	public PlayList(String m3uPathname) throws NotPlayableException {
 		loadFromM3U(m3uPathname);
-//		itr = new ControllablePlayListIterator(playList);
-		itr = new ControllablePlayListIterator(new ArrayList<>(playList));
+		itr = new ControllablePlayListIterator(playList);
 	}
 	
 	public void add(AudioFile audioFile) {
 		playList.add(audioFile);
-//		itr = new ControllablePlayListIterator(playList);
-		itr = new ControllablePlayListIterator(new ArrayList<>(playList));
+		itr = new ControllablePlayListIterator(playList);
 	}
 	
 	public void remove(AudioFile audioFile) {
 		playList.remove(audioFile);
-//		itr = new ControllablePlayListIterator(playList);
-		itr = new ControllablePlayListIterator(new ArrayList<>(playList));
+		itr = new ControllablePlayListIterator(playList);
 	}
 	
 	public int size() {
@@ -43,8 +39,7 @@ public class PlayList {
 		if (itr.getList().isEmpty()) {
 			return null;
 		} else if (itr.getItrPosition() >= itr.getList().size()) {
-//			itr = new ControllablePlayListIterator(playList);
-			itr = new ControllablePlayListIterator(new ArrayList<>(playList));
+			itr = new ControllablePlayListIterator(new ArrayList<>(playList), search, sortCriterion);
 		}
 		return itr.getList().get(itr.getItrPosition());
 	}
@@ -115,10 +110,9 @@ public class PlayList {
 		return search;
 	}
 	
-	public void setSearch(String search) {
-		this.search = search;
-//		itr = new ControllablePlayListIterator(playList, search, sortCriterion);
-		itr = new ControllablePlayListIterator(new ArrayList<>(playList), search, sortCriterion);
+	public void setSearch(String sc) {
+		this.search = sc;
+		itr = new ControllablePlayListIterator(playList, search, sortCriterion);
 	}
 	
 	public SortCriterion getSortCriterion() {
@@ -127,8 +121,9 @@ public class PlayList {
 	
 	public void setSortCriterion(SortCriterion sc) {
 		this.sortCriterion = sc;
-//		itr = new ControllablePlayListIterator(playList, search, sc);
+		System.out.println("Sort: " + itr.hashCode());
 		itr = new ControllablePlayListIterator(new ArrayList<>(playList), search, sc);
+		System.out.println("~Sort: " + itr.hashCode());
 	}
 	
 	public void jumpToAudioFile(AudioFile af) {

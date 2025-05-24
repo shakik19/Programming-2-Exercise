@@ -18,10 +18,18 @@ public class ControllablePlayListIterator implements Iterator<AudioFile> {
 		
 		if (sort != SortCriterion.DEFAULT) {
 			switch (sort) {
-				case ALBUM -> this.list.sort(new AlbumComparator());
-				case AUTHOR -> this.list.sort(new AuthorComparator());
-				case DURATION -> this.list.sort(new DurationComparator());
-				case TITLE -> this.list.sort(new TitleComparator());
+				case ALBUM:
+					this.list.sort(new AlbumComparator());
+					break;
+				case AUTHOR:
+					this.list.sort(new AuthorComparator());
+					break;
+				case DURATION:
+					this.list.sort(new DurationComparator());
+					break;
+				case TITLE:
+					this.list.sort(new TitleComparator());
+					break;
 			}
 		}
 	}
@@ -43,10 +51,13 @@ public class ControllablePlayListIterator implements Iterator<AudioFile> {
 						|| (audioFile.getAuthor() != null && audioFile.getAuthor().toLowerCase().contains(search));
 		
 		boolean matchesAlbum = false;
-		if (audioFile instanceof TaggedFile taggedFile) {
+/*		if (audioFile instanceof TaggedFile taggedFile) {
+			matchesAlbum = taggedFile.getAlbum() != null && taggedFile.getAlbum().toLowerCase().contains(search);
+		}*/
+		if (audioFile instanceof TaggedFile) {
+			TaggedFile taggedFile = (TaggedFile) audioFile;
 			matchesAlbum = taggedFile.getAlbum() != null && taggedFile.getAlbum().toLowerCase().contains(search);
 		}
-		
 		return matchesBasic || matchesAlbum;
 	}
 	
@@ -82,8 +93,8 @@ public class ControllablePlayListIterator implements Iterator<AudioFile> {
 		return itrPosition;
 	}
 	
-	public void setItrPosition(int itrPosition) {
-		this.itrPosition = itrPosition;
+	public void setItrPosition(int newPos) {
+		this.itrPosition = newPos;
 	}
 	
 	public List<AudioFile> getList() {
