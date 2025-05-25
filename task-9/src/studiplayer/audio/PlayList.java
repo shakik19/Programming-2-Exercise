@@ -16,9 +16,13 @@ public class PlayList {
 		this.itr = new ControllablePlayListIterator(playList);
 	}
 	
-	public PlayList(String m3uPathname) throws NotPlayableException {
-		loadFromM3U(m3uPathname);
-		itr = new ControllablePlayListIterator(playList);
+	public PlayList(String m3uPathname) {
+		try {
+			loadFromM3U(m3uPathname);
+			itr = new ControllablePlayListIterator(playList);
+		} catch (NotPlayableException e) {
+			throw new RuntimeException("Failed to load playlist from: " + m3uPathname, e);
+		}
 	}
 	
 	public void add(AudioFile audioFile) {
